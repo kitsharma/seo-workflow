@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Analysis Results - achievewith.ai</title>
+    <meta name="company-name" content="achievewith.ai">
+    <meta name="description" content="SEO analysis results and recommendations">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              teal: {
+                light: '#39b0ac',
+                DEFAULT: '#1e7d88',
+                dark: '#136570'
+              }
+            }
+          }
+        }
+      }
+    </script>
+    
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.0/dist/cdn.min.js"></script>
+    
+    <!-- Chart.js for visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    
+    <!-- CSS includes -->
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/components.css">
+
+    <!-- JSON data for Alpine.js -->
+    <script id="seo-results-data" type="application/json">
+        {{ result|tojson }}
+    </script>
+    
+    <!-- JavaScript modules -->
+    <script type="module" src="/static/js/result_view.js"></script>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen" x-data="resultView()" x-init="init()">
+        <!-- Loading overlay -->
+        <div class="loading-overlay" x-show="isLoading">
+            <div class="flex flex-col items-center">
+                <svg class="animate-spin h-12 w-12 text-teal-500 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="text-lg font-medium text-gray-800">Loading analysis results...</p>
+            </div>
+        </div>
+        
+        <!-- Error message if results are invalid -->
+        <div x-show="hasError" class="flex flex-col items-center justify-center h-screen p-4" x-cloak>
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 max-w-md">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <h3 class="text-sm font-medium text-red-800">Error Loading Results</h3>
+                        <div class="mt-2 text-sm text-red-700">
+                            <p x-text="errorMessage"></p>
+                        </div>
+                        <div class="mt-4">
+                            <a href="/" class="text-sm font-medium text-red-600 hover:text-red-500">
+                                Return to Dashboard
+                                <span aria-hidden="true"> &rarr;</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main content when results are valid -->
+        <div x-show="hasValidResults" class="animate-fade-in" style="display: none;">
+            <!-- Header -->
+            <header class="bg-gradient-to-r from-teal-700 to-teal-500 text-white shadow-lg">
+                <div class="container mx-auto py-4 px-6 flex justify-between items-center">
+                    <a href="/" class="flex items-center space-x-3">
+                        <img src="/static/img/logo.png" alt="achievewith.ai logo" class="w-10 h-10">
+                        <div>
+                            <h1 class="text-2xl font-bold">achievewith.ai</h1>
+                            <p class="text-xs opacity-80">Empowering your digital potential</p>
+                        </div>
+                    </a>
+                    <div class="flex space-x-4">
+                        <button @click="exportToPDF()" class="bg-white text-red-600 px-3 py-1 rounded text-sm font-medium hover:bg-red-50">
+                            Export PDF
+                        </button>
+                        <button @click="exportToExcel()" class="bg-white text-green-600 px-3 py-1 rounded text-sm font-medium hover:bg-green-50">
+                            Export Excel
+                        </button>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Main content -->
+            <main class="container mx-auto px-4 py-6 sm:px-6 lg:px-8">
+                <!-- Executive Summary -->
+                {% include 'partials/executive_summary.html' %}
+                
+                <!-- Main tabs -->
+                <div class="mb-6">
+                    <div class="border-b border-gray-200">
+                        <nav class="flex -mb-px">
+                            <button @click="activeTab = 'overview'" 
+                                    class="tab-button mr-8"
+                                    :class="{ 'active': activeTab === 'overview' }">
+                                Overview
+                            </button>
+                            <button @click="activeTab = 'recommendations'" 
+                                    class="tab-button mr-8"
+                                    :class="{ 'active': activeTab === 'recommendations' }">
+                                Recommendations
+                            </button>
+                            <button @click="activeTab = 'analysis'" 
+                                    class="tab-button mr-8"
+                                    :class="{ 'active': activeTab === 'analysis' }">
+                                Detailed Analysis
+                            </button>
+                            <button @click="activeTab = 'quickActions'" 
+                                    class="tab-button"
+                                    :class="{ 'active': activeTab === 'quickActions' }">
+                                Quick Actions
+                            </button>
+                        </nav>
+                    </div>
+                </div>
+                
+                <!-- Tab content -->
+                <div class="mt-6">
+                    <!-- Overview Tab -->
+                    {% include 'partials/overview_tab.html' %}
+                    
+                    <!-- Recommendations Tab -->
+                    {% include 'partials/recommendations_tab.html' %}
+                    
+                    <!-- Detailed Analysis Tab -->
+                    {% include 'partials/analysis_tab.html' %}
+                    
+                    <!-- Quick Actions Tab -->
+                    {% include 'partials/quick_actions_tab.html' %}
+                </div>
+            </main>
+            
+            <!-- Footer -->
+            <footer class="bg-gray-100 border-t mt-12 py-6">
+                <div class="container mx-auto px-6">
+                    <div class="flex justify-between items-center">
+                        <p class="text-gray-600">achievewith.ai - SEO Workflow System</p>
+                        <div class="text-xs text-gray-400">
+                            <p>This tool utilizes artificial intelligence to generate insights and recommendations.</p>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+</body>
+</html>

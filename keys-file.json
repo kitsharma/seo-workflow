@@ -1,0 +1,9 @@
+{
+  "anthropic": {
+    "api_key": "your_claude_api_key_here",
+    "org_id": "" 
+  },
+  "application": {
+    "secret_key": "your_application_secret_key_here" 
+  }
+}

@@ -1,0 +1,46 @@
+<div class="mt-8 animate-slide-up" style="animation-delay: 0.1s;">
+    <div class="border-b border-gray-200">
+        <nav class="-mb-px flex space-x-8">
+            <a 
+                href="#" 
+                class="tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm tab-active" 
+                @click.prevent="tabManager.setActiveTab('overview')"
+                :class="{ 'tab-active': tabManager.activeTab === 'overview' }">
+                <svg class="-ml-0.5 mr-2 h-5 w-5 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                Overview
+            </a>
+            <a 
+                href="#" 
+                class="tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" 
+                @click.prevent="tabManager.setActiveTab('recommendations')"
+                :class="{ 'tab-active': tabManager.activeTab === 'recommendations' }">
+                <svg class="-ml-0.5 mr-2 h-5 w-5 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                Recommendations
+            </a>
+            <a 
+                href="#" 
+                class="tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" 
+                @click.prevent="tabManager.setActiveTab('detailed')"
+                :class="{ 'tab-active': tabManager.activeTab === 'detailed' }">
+                <svg class="-ml-0.5 mr-2 h-5 w-5 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Detailed Analysis
+            </a>
+            <a 
+                href="#" 
+                class="tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm" 
+                @click.prevent="tabManager.setActiveTab('quick-actions')"
+                :class="{ 'tab-active': tabManager.activeTab === 'quick-actions' }">
+                <svg class="-ml-0.5 mr-2 h-5 w-5 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                </svg>
+                Quick Actions
+            </a>
+        </nav>
+    </div>
+</div>

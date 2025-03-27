@@ -1,0 +1,70 @@
+<div x-show="activeTab === 'quickActions'" class="animate-fade-in" style="display: none;">
+    <div class="bg-white rounded-lg shadow">
+        <div class="px-6 py-5 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Quick Actions Plan</h3>
+        </div>
+        <div class="p-6">
+            <template x-if="quickActions.length === 0">
+                <div class="text-center py-10">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    <h3 class="mt-2 text-sm font-medium text-gray-900">No quick actions added</h3>
+                    <p class="mt-1 text-sm text-gray-500">Add recommendations to your quick actions plan from the Recommendations tab.</p>
+                </div>
+            </template>
+            
+            <template x-if="quickActions.length > 0">
+                <div>
+                    <p class="text-sm text-gray-600 mb-6">Use this plan to prioritize and implement the most important recommendations for your SEO strategy.</p>
+                    
+                    <div class="space-y-4">
+                        <template x-for="(action, index) in quickActions" :key="index">
+                            <div class="quick-action-item p-4 border rounded-lg bg-white shadow-sm" :class="'priority-' + action.priority">
+                                <div class="flex items-start">
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="text-base font-medium text-gray-900" x-text="action.title"></h4>
+                                        <div class="mt-1 flex flex-wrap items-center">
+                                            <span 
+                                                :class="'category-' + action.category"
+                                                class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium mr-2 mb-1">
+                                                <span x-text="formatCategory(action.category)"></span>
+                                            </span>
+                                            <span 
+                                                :class="{
+                                                    'bg-red-100 text-red-800': action.priority === 'high',
+                                                    'bg-yellow-100 text-yellow-800': action.priority === 'medium',
+                                                    'bg-gray-100 text-gray-800': action.priority === 'low'
+                                                }"
+                                                class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium mr-2 mb-1">
+                                                <span x-text="formatPriority(action.priority) + ' Priority'"></span>
+                                            </span>
+                                        </div>
+                                        <p class="mt-2 text-sm text-gray-600" x-text="action.description || 'No additional details available.'"></p>
+                                    </div>
+                                    <div class="ml-4 flex-shrink-0">
+                                        <button @click="removeFromQuickActions(action.id)" class="text-gray-400 hover:text-gray-500">
+                                            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    
+                    <!-- Export buttons -->
+                    <div class="mt-8 flex justify-end">
+                        <button @click="window.print()" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500">
+                            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5 4v3H4a2 2 0 00-2 2v3a2 2 0 002 2h1v2a2 2 0 002 2h6a2 2 0 002-2v-2h1a2 2 0 002-2V9a2 2 0 00-2-2h-1V4a2 2 0 00-2-2H7a2 2 0 00-2 2zm8 0H7v3h6V4zm0 8H7v4h6v-4z" clip-rule="evenodd" />
+                            </svg>
+                            Print Action Plan
+                        </button>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>

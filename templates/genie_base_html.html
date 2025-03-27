@@ -1,0 +1,134 @@
+<!-- 
+achievewith.ai - Base HTML Template
+Path: /templates/base.html
+Purpose: Provides the basic layout and common elements for all pages with Genie theme
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}achievewith.ai - SEO Magic{% endblock %}</title>
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              genie: {
+                light: '#00A3E0',  // Light blue from genie
+                DEFAULT: '#004165', // Darker blue from genie
+                accent: '#E6A845'   // Gold from lamp
+              }
+            }
+          }
+        }
+      }
+    </script>
+    
+    <!-- Alpine.js for lightweight interactions -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <style>
+        /* Custom styles based on genie theme */
+        .gradient-bg {
+            background: linear-gradient(120deg, #00A3E0 0%, #004165 100%);
+        }
+        
+        .primary-color {
+            color: #00A3E0;
+        }
+        
+        .primary-bg {
+            background-color: #00A3E0;
+        }
+        
+        .primary-border {
+            border-color: #00A3E0;
+        }
+        
+        .secondary-color {
+            color: #004165;
+        }
+        
+        .secondary-bg {
+            background-color: #004165;
+        }
+        
+        .accent-color {
+            color: #E6A845;
+        }
+        
+        .accent-bg {
+            background-color: #E6A845;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+        }
+        
+        .magic-shadow {
+            box-shadow: 0 0 15px rgba(0, 163, 224, 0.5);
+        }
+    </style>
+    
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto py-4 px-6 flex justify-between items-center">
+            <a href="/" class="flex items-center space-x-3">
+                <img src="/static/img/logo.png" alt="achievewith.ai genie" class="logo">
+                <div>
+                    <h1 class="text-2xl font-bold">achievewith.ai</h1>
+                    <p class="text-xs opacity-80">Your Digital Wishes Granted</p>
+                </div>
+            </a>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="/" class="hover:underline">Dashboard</a></li>
+                    <li><a href="/#workflows" class="hover:underline">Wishes</a></li>
+                    <li><a href="/#results" class="hover:underline">Results</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="container mx-auto py-8 px-6">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-100 border-t mt-12 py-6">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center">
+                <p class="text-gray-600">achievewith.ai - SEO Workflow System</p>
+                <div class="text-xs text-gray-400">
+                    <p>This tool utilizes artificial intelligence to generate insights and recommendations.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!-- 
+achievewith.ai - Dashboard Template
+Path: /templates/index.html
+Purpose: Main dashboard page showing available workflows and recent results
+-->
+
+{% extends "base.html" %}
+
+{% block title %}Dashboard - achievewith.ai{% endblock %}
+
+{% block content %}
+<div class="space-y-10">
+    <!-- Hero Section -->
+    <section class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="flex flex-col md:flex-row">
+            <div class="p-8 md:w-3/5">
+                <h2 class="text-3xl font-bold mb-4 primary-color">Enhance Your Digital Presence</h2>
+                <p class="text-gray-600 mb-6">Use our AI-powered SEO tools to develop your online strategy. From keyword research to content creation, achievewith.ai helps you grow your digital footprint with data-driven insights.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <div class="bg-gray-50 p-4 rounded-lg border">
+                        <h3 class="font-medium mb-2 primary-color">Comprehensive Analysis</h3>
+                        <p class="text-sm text-gray-600">Analyze entire websites and competitive landscapes with advanced AI capabilities.</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg border">
+                        <h3 class="font-medium mb-2 primary-color">Engaging Content</h3>
+                        <p class="text-sm text-gray-600">Create content that resonates with readers while meeting search engine requirements.</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg border">
+                        <h3 class="font-medium mb-2 primary-color">User Intent Focus</h3>
+                        <p class="text-sm text-gray-600">Understand the goals behind search queries with nuanced interpretation.</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg border">
+                        <h3 class="font-medium mb-2 primary-color">Clear Reasoning</h3>
+                        <p class="text-sm text-gray-600">Understand the rationale behind every SEO recommendation with transparent explanations.</p>
+                    </div>
+                </div>
+                
+                <a href="#workflows" class="inline-block primary-bg hover:bg-teal-light text-white font-medium py-2 px-6 rounded-lg transition duration-200">Start a Workflow</a>
+            </div>
+            <!-- Right Panel - Using the specific genie image -->
+            <div class="md:w-2/5 gradient-bg flex items-center justify-center p-4">
+                <div class="text-center">
+                    <!-- Specific genie image file -->
+                    <img src="/static/img/genie_800x600.png" alt="achievewith.ai genie" class="max-w-full h-auto">
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Workflows Section -->
+    <section id="workflows" class="bg-white rounded-xl shadow-md overflow-hidden p-8">
+        <h2 class="text-2xl font-bold mb-6 primary-color">Available Workflows</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for name, description in workflows.items() %}
+            <div class="border rounded-lg overflow-hidden hover:shadow-md transition duration-200">
+                <div class="gradient-bg p-4">
+                    <h3 class="text-white font-medium">{{ name|replace("_", " ")|title }}</h3>
+                </div>
+                <div class="p-4">
+                    <p class="text-gray-600 mb-4">{{ description }}</p>
+                    <a href="/workflow/{{ name }}" class="inline-block primary-bg hover:bg-teal-light text-white text-sm font-medium py-2 px-4 rounded transition duration-200">Configure</a>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Custom Workflow Card -->
+            <div class="border rounded-lg overflow-hidden hover:shadow-md transition duration-200">
+                <div class="bg-gray-800 p-4">
+                    <h3 class="text-white font-medium">Custom Workflow</h3>
+                </div>
+                <div class="p-4">
+                    <p class="text-gray-600 mb-4">Build your own workflow by combining specialized tools in a custom sequence.</p>
+                    <a href="/workflow/custom" class="inline-block bg-gray-700 hover:bg-gray-800 text-white text-sm font-medium py-2 px-4 rounded transition duration-200">Create Custom</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Recent Results Section -->
+    <section id="results" class="bg-white rounded-xl shadow-md overflow-hidden p-8">
+        <h2 class="text-2xl font-bold mb-6 primary-color">Recent Results</h2>
+        
+        {% if results %}
+        <div class="space-y-6">
+            {% for result in results %}
+            <div class="border rounded-lg overflow-hidden hover:shadow-md transition duration-200">
+                <div class="bg-gray-50 p-4 border-b">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h3 class="font-medium text-lg primary-color">{{ result.workflow_type|replace("_", " ")|title }}</h3>
+                            <p class="text-sm text-gray-500">{{ result.timestamp }}</p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <a href="/results/{{ result.id }}" class="inline-block primary-bg hover:bg-teal-light text-white text-sm font-medium py-1 px-3 rounded transition duration-200">View Results</a>
+                            <a href="/download/{{ result.id }}" class="inline-block bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-medium py-1 px-3 rounded transition duration-200">Download</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <div class="flex space-x-6">
+                        <div>
+                            <span class="text-sm text-gray-500">Steps:</span>
+                            <span class="font-medium">{{ result.steps }}</span>
+                        </div>
+                        <div>
+                            <span class="text-sm text-gray-500">Type:</span>
+                            <span class="font-medium">{{ result.workflow_type|replace("_", " ")|title }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-8">
+            <p class="text-gray-500">No workflow results yet. Start a workflow to see results here.</p>
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

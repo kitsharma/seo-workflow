@@ -1,0 +1,71 @@
+<div x-show="activeTab === 'overview'" class="animate-fade-in">
+    <div class="bg-white rounded-lg shadow">
+        <div class="px-6 py-5 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Performance Overview</h3>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Performance Chart -->
+                <div>
+                    <div class="chart-title">SEO Performance by Category</div>
+                    <div class="chart-container">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Category Distribution -->
+                <div>
+                    <div class="chart-title">Issues by Category</div>
+                    <div class="chart-container">
+                        <canvas id="categoryDistributionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Priority Distribution -->
+                    <div>
+                        <div class="chart-title">Issues by Priority</div>
+                        <div class="chart-container">
+                            <canvas id="priorityDistributionChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Summary Stats -->
+                    <div>
+                        <div class="chart-title">Summary Statistics</div>
+                        <div class="bg-gray-50 rounded-lg p-6">
+                            <div class="space-y-4">
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Total Recommendations:</span>
+                                    <span class="font-medium" x-text="recommendations.length"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">High Priority Issues:</span>
+                                    <span class="font-medium" x-text="recommendations.filter(r => r.priority === 'high').length"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Technical SEO Issues:</span>
+                                    <span class="font-medium" x-text="recommendations.filter(r => r.category === 'technical').length"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Content Issues:</span>
+                                    <span class="font-medium" x-text="recommendations.filter(r => r.category === 'content').length"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Keyword Issues:</span>
+                                    <span class="font-medium" x-text="recommendations.filter(r => r.category === 'keywords').length"></span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Workflow Type:</span>
+                                    <span class="font-medium" x-text="result.workflow_type ? result.workflow_type.replace('_', ' ') : 'Custom'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

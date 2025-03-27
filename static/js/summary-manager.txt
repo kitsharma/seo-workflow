@@ -1,0 +1,230 @@
+/**
+ * SEO Workflow System - Summary Manager Module
+ * 
+ * Generates and manages the executive summary and key metrics.
+ * 
+ * @module summary_manager
+ * @author achievewith.ai team
+ */
+
+import _ from 'lodash';
+
+/**
+ * Summary Manager class
+ * 
+ * Handles the executive summary and key metrics for the SEO workflow results.
+ */
+export class SummaryManager {
+    /**
+     * Create a new SummaryManager instance
+     * @param {Object} resultData - The result data
+     * @param {RecommendationManager} recommendationManager - The recommendation manager
+     */
+    constructor(resultData, recommendationManager) {
+        this.resultData = resultData;
+        this.recommendationManager = recommendationManager;
+        
+        // Executive summary
+        this.executiveSummary = '';
+        
+        // Formatted metrics
+        this.formattedExecutionTime = 'N/A';
+        this.formattedWordCount = 'N/A';
+        
+        // Calculate word count in analysis
+        this.analysisWordCount = 0;
+        
+        // Initialize summary
+        this.initialize();
+    }
+    
+    /**
+     * Initialize summary data
+     */
+    initialize() {
+        this.generateExecutiveSummary();
+        this.calculateWordCount();
+        this.formatMetrics();
+    }
+    
+    /**
+     * Generate the executive summary
+     */
+    generateExecutiveSummary() {
+        try {
+            // Get workflow type
+            const workflowType = this.resultData.workflow_type || 'SEO';
+            const formattedType = workflowType.replace(/_/g, ' ');
+            
+            // Start with basic summary
+            let summary = `This ${formattedType} analysis `;
+            
+            // Add details based on input data
+            if (this.resultData.website_url) {
+                summary += `examined the website ${this.resultData.website_url}`;
+            } else if (this.resultData.target_keywords) {
+                summary += `examined keywords related to "${this.resultData.target_keywords}"`;
+            } else {
+                summary += `examined your SEO requirements`;
+            }
+            
+            // Count total recommendations
+            const totalRecommendations = this.recommendationManager.totalRecommendations;
+            
+            // Add recommendation count
+            summary += `. The analysis produced ${totalRecommendations} actionable recommendations`;
+            
+            // Add specific insights based on agents used
+            if (this.hasAgentType('keyword_research')) {
+                summary += `, identified valuable keyword opportunities`;
+            }
+            if (this.hasAgentType('content')) {
+                summary += `, provided content optimization suggestions`;
+            }
+            if (this.hasAgentType('technical')) {
+                summary += `, detected technical SEO issues`;
+            }
+            
+            // Add industry context if available
+            if (this.resultData.industry) {
+                summary += `. The analysis took into account industry-specific factors for the ${this.resultData.industry} sector`;
+            }
+            
+            // Conclude with time taken and recommendation
+            const timeInSeconds = _.get(this.resultData, 'execution_summary.total_execution_time_seconds', 0);
+            summary += `. Analysis completed in ${timeInSeconds.toFixed(1)} seconds.`;
+            
+            summary += `\n\nThis report provides a comprehensive overview of the findings along with prioritized recommendations to improve your search visibility and organic traffic.`;
+            
+            this.executiveSummary = summary;
+        } catch (error) {
+            console.error('Error generating executive summary:', error);
+            this.executiveSummary = 'An error occurred while generating the executive summary.';
+        }
+    }
+    
+    /**
+     * Calculate the word count in all analysis content
+     */
+    calculateWordCount() {
+        try {
+            let wordCount = 0;
+            
+            // For each step, count words in analysis and recommendations
+            _.forEach(this.resultData, (value, key) => {
+                if (!key.startsWith('output_') || !_.isObject(value)) {
+                    return;
+                }
+                
+                // Count words in analysis text
+                if (value.analysis && typeof value.analysis === 'string') {
+                    wordCount += value.analysis.trim().split(/\s+/).length;
+                }
+                
+                // Count words in recommendations
+                if (value.recommendations && Array.isArray(value.recommendations)) {
+                    value.recommendations.forEach(rec => {
+                        if (typeof rec === 'string') {
+                            wordCount += rec.trim().split(/\s+/).length;
+                        }
+                    });
+                }
+                
+                // Count words in reasoning
+                if (value.reasoning && typeof value.reasoning === 'string') {
+                    wordCount += value.reasoning.trim().split(/\s+/).length;
+                }
+            });
+            
+            this.analysisWordCount = wordCount;
+        } catch (error) {
+            console.error('Error calculating word count:', error);
+            this.analysisWordCount = 0;
+        }
+    }
+    
+    /**
+     * Format all metrics for display
+     */
+    formatMetrics() {
+        // Format execution time
+        const timeInSeconds = _.get(this.resultData, 'execution_summary.total_execution_time_seconds', 0);
+        this.formattedExecutionTime = this.formatExecutionTime(timeInSeconds);
+        
+        // Format word count
+        this.formattedWordCount = this.formatWordCount(this.analysisWordCount);
+    }
+    
+    /**
+     * Format execution time for display
+     * @param {number} seconds - The execution time in seconds
+     * @returns {string} The formatted execution time
+     */
+    formatExecutionTime(seconds) {
+        if (!seconds || isNaN(seconds)) {
+            return 'Unknown';
+        }
+        
+        // Format the time
+        if (seconds < 1) {
+            return `${Math.round(seconds * 1000)}ms`;
+        } else if (seconds < 60) {
+            return `${seconds.toFixed(2)}s`;
+        } else {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = (seconds % 60).toFixed(0);
+            return `${minutes}m ${remainingSeconds}s`;
+        }
+    }
+    
+    /**
+     * Format a word count for display
+     * @param {number} count - The word count
+     * @returns {string} The formatted word count
+     */
+    formatWordCount(count) {
+        if (!count || isNaN(count)) {
+            return 'Unknown';
+        }
+        
+        // Format the count
+        if (count < 1000) {
+            return `${count} words`;
+        } else {
+            return `${(count / 1000).toFixed(1)}k words`;
+        }
+    }
+    
+    /**
+     * Check if the results include a specific agent type
+     * @param {string} type - The agent type to check for
+     * @returns {boolean} True if the agent type exists
+     */
+    hasAgentType(type) {
+        return _.some(this.resultData, (value, key) => key.toLowerCase().includes(type));
+    }
+    
+    /**
+     * Get the count of high priority issues
+     * @returns {number} The count of high priority issues
+     */
+    getHighPriorityCount() {
+        return _.filter(this.recommendationManager.recommendations, { priority: 'high' }).length;
+    }
+    
+    /**
+     * Get a prioritized action plan
+     * @param {number} [maxItems=5] - Maximum number of items to include in the plan
+     * @returns {Array} Array of prioritized action items
+     */
+    getPrioritizedActionPlan(maxItems = 5) {
+        // Get high priority recommendations first
+        const highPriority = _.filter(this.recommendationManager.recommendations, { priority: 'high' });
+        
+        // Get medium priority if needed
+        const mediumPriority = _.filter(this.recommendationManager.recommendations, { priority: 'medium' });
+        
+        // Combine and limit to maxItems
+        return _.take([...highPriority, ...mediumPriority], maxItems);
+    }
+}

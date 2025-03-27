@@ -1,0 +1,137 @@
+<!-- 
+achievewith.ai - System Information Template
+Path: /templates/system_info.html
+Purpose: Displays system configuration and diagnostic information
+-->
+
+{% extends "base.html" %}
+
+{% block title %}System Information - achievewith.ai{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Page Header -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <div class="gradient-bg p-6">
+            <h1 class="text-2xl font-bold text-white">System Information</h1>
+            <p class="text-white opacity-90 mt-2">View configuration settings and diagnostic information</p>
+        </div>
+    </div>
+    
+    <!-- API Mode Information -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden p-6">
+        <h2 class="text-xl font-medium primary-color mb-4">API Mode</h2>
+        
+        <div class="bg-gray-50 rounded-lg p-4 border">
+            <div class="flex items-center mb-4">
+                <span class="api-mode-indicator {% if info.api_mode == 'live' %}api-mode-live{% else %}api-mode-mock{% endif %} mr-3">
+                    {% if info.api_mode == 'live' %}LIVE API{% else %}DEMO MODE{% endif %}
+                </span>
+                <span class="text-gray-700">{{ info.api_mode_reason }}</span>
+            </div>
+            
+            <h3 class="text-sm font-medium text-gray-700 mb-2">Actions to Take:</h3>
+            {% if info.api_mode == 'live' %}
+            <p class="text-green-700">✅ API mode is working correctly. No action needed.</p>
+            {% else %}
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+                <li>Check that your keys.json file is correctly formatted</li>
+                <li>Verify that KEYS_FILE_PATH in .env points to the correct location</li>
+                <li>Make sure your Anthropic API key is valid</li>
+                <li>Ensure FORCE_MOCK_MODE is not set to true in your .env file</li>
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Key Diagnostics -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden p-6">
+        <h2 class="text-xl font-medium primary-color mb-4">Key Diagnostics</h2>
+        
+        <div class="space-y-4">
+            <div class="bg-gray-50 rounded-lg p-4 border">
+                <h3 class="font-medium text-gray-700 mb-2">Status</h3>
+                <div class="flex items-center">
+                    {% if info.key_diagnostics.status == 'success' %}
+                    <span class="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
+                    <span class="text-green-700">{{ info.key_diagnostics.status }}</span>
+                    {% else %}
+                    <span class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></span>
+                    <span class="text-yellow-700">{{ info.key_diagnostics.status }}</span>
+                    {% endif %}
+                </div>
+                <p class="text-gray-600 mt-1">{{ info.key_diagnostics.message }}</p>
+            </div>
+            
+            <div class="bg-gray-50 rounded-lg p-4 border">
+                <h3 class="font-medium text-gray-700 mb-2">Keys File Path</h3>
+                <p class="font-mono text-sm break-all">{{ info.key_diagnostics.keys_file_path }}</p>
+                
+                {% if info.key_diagnostics.absolute_path is defined %}
+                <h4 class="font-medium text-gray-700 mt-3 mb-1">Absolute Path</h4>
+                <p class="font-mono text-sm break-all">{{ info.key_diagnostics.absolute_path }}</p>
+                {% endif %}
+            </div>
+            
+            {% if info.key_diagnostics.details %}
+            <div class="bg-gray-50 rounded-lg p-4 border">
+                <h3 class="font-medium text-gray-700 mb-2">Error Details</h3>
+                <ul class="list-disc list-inside text-red-700 space-y-1">
+                    {% for detail in info.key_diagnostics.details %}
+                    <li>{{ detail }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Environment Variables -->
+    <div class="bg-white rounded-xl shadow-md overflow-hidden p-6">
+        <h2 class="text-xl font-medium primary-color mb-4">Environment Variables</h2>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Variable
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Value
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for key, value in info.environment.items() %}
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap font-mono text-sm text-gray-900">
+                            {{ key }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap font-mono text-sm text-gray-500">
+                            {{ value }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Actions -->
+    <div class="flex justify-between">
+        <a href="/" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50">
+            Return to Dashboard
+        </a>
+        
+        <div>
+            <button onclick="window.print()" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50">
+                Print Diagnostics
+            </button>
+            <a href="/" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white primary-bg hover:bg-teal-700">
+                Restart Application
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

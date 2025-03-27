@@ -1,0 +1,24 @@
+# API keys and secrets
+.env
+.env.*
+!.env.example
+keys.json
+*_key*
+*apikey*
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# Logs
+logs/
+*.log
+results/
+
+# Node.js
+node_modules/

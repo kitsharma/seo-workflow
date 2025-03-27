@@ -1,0 +1,64 @@
+<div x-show="activeTab === 'analysis'" class="animate-fade-in" style="display: none;">
+    <div class="bg-white rounded-lg shadow">
+        <div class="px-6 py-5 border-b border-gray-200">
+            <h3 class="text-lg font-medium text-gray-900">Detailed Analysis</h3>
+        </div>
+        <div class="px-6 py-5">
+            <!-- Loop through each output step and display analysis -->
+            <div class="space-y-8">
+                <template x-for="(key, index) in Object.keys(result).filter(k => k.startsWith('output_'))" :key="index">
+                    <div class="analysis-section">
+                        <div class="analysis-section-header">
+                            <h3 x-text="key.replace('output_', '').replace('_', ' ').charAt(0).toUpperCase() + key.replace('output_', '').replace('_', ' ').slice(1)"></h3>
+                        </div>
+                        <div class="analysis-content">
+                            <template x-if="result[key] && result[key].analysis">
+                                <div>
+                                    <p class="text-gray-700" x-text="result[key].analysis"></p>
+                                    
+                                    <!-- If there's reasoning, show it -->
+                                    <template x-if="result[key].reasoning">
+                                        <div class="mt-4 pt-4 border-t border-gray-200">
+                                            <h4 class="text-sm font-medium text-gray-900 mb-2">Reasoning</h4>
+                                            <p class="text-sm text-gray-600" x-text="result[key].reasoning"></p>
+                                        </div>
+                                    </template>
+                                    
+                                    <!-- If there are recommendations in this step, list them -->
+                                    <template x-if="result[key].recommendations && result[key].recommendations.length > 0">
+                                        <div class="mt-4 pt-4 border-t border-gray-200">
+                                            <h4 class="text-sm font-medium text-gray-900 mb-2">Recommendations</h4>
+                                            <ul class="space-y-2 text-sm text-gray-600 list-disc pl-5">
+                                                <template x-for="(rec, recIndex) in result[key].recommendations" :key="recIndex">
+                                                    <li x-text="typeof rec === 'string' ? rec : (rec.title || rec.recommendation || JSON.stringify(rec))"></li>
+                                                </template>
+                                            </ul>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                            
+                            <!-- Fallback if analysis is not structured as expected -->
+                            <template x-if="!result[key] || !result[key].analysis">
+                                <div>
+                                    <p class="text-gray-500 italic">No detailed analysis available for this step.</p>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+                
+                <!-- If no analysis steps are found -->
+                <template x-if="Object.keys(result).filter(k => k.startsWith('output_')).length === 0">
+                    <div class="text-center py-10">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">No analysis data available</h3>
+                        <p class="mt-1 text-sm text-gray-500">Try running a different workflow or check the data format.</p>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </div>
+</div>

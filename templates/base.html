@@ -1,0 +1,122 @@
+<!-- 
+achievewith.ai - Base HTML Template
+Path: /templates/base.html
+Purpose: Provides the basic layout and common elements for all pages
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}achievewith.ai - AI-Powered SEO{% endblock %}</title>
+    
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              teal: {
+                light: '#39b0ac',
+                DEFAULT: '#1e7d88',
+                dark: '#136570'
+              }
+            }
+          }
+        }
+      }
+    </script>
+    
+    <!-- Alpine.js for lightweight interactions -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+    <style>
+        /* Custom styles based on brand guidelines */
+        .gradient-bg {
+            background: linear-gradient(120deg, #39b0ac 0%, #1e7d88 100%);
+        }
+        
+        .primary-color {
+            color: #1e7d88;
+        }
+        
+        .primary-bg {
+            background-color: #1e7d88;
+        }
+        
+        .primary-border {
+            border-color: #1e7d88;
+        }
+        
+        .secondary-color {
+            color: #39b0ac;
+        }
+        
+        .secondary-bg {
+            background-color: #39b0ac;
+        }
+        
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.7;
+            }
+        }
+
+        .logo {
+            width: 60px;
+            height: 60px;
+        }
+    </style>
+    
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-lg">
+        <div class="container mx-auto py-4 px-6 flex justify-between items-center">
+            <a href="/" class="flex items-center space-x-3">
+                <img src="/static/img/logo.png" alt="achievewith.ai logo" class="logo">
+                <div>
+                    <h1 class="text-2xl font-bold">achievewith.ai</h1>
+                    <p class="text-xs opacity-80">Empowering your digital potential</p>
+                </div>
+            </a>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="/" class="hover:underline">Dashboard</a></li>
+                    <li><a href="/#workflows" class="hover:underline">Workflows</a></li>
+                    <li><a href="/#results" class="hover:underline">Results</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="container mx-auto py-8 px-6">
+        {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-100 border-t mt-12 py-6">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center">
+                <p class="text-gray-600">achievewith.ai - SEO Workflow System</p>
+                <div class="text-xs text-gray-400">
+                    <p>This tool utilizes artificial intelligence to generate insights and recommendations.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>
