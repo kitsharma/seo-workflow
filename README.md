@@ -1,6 +1,17 @@
 # achievewith.ai SEO Workflow System
 
-A web-based system for running SEO workflows powered by Claude AI.
+A powerful web-based system for running SEO workflows powered by Claude AI. This application helps you analyze websites, develop content strategies, create SEO-optimized content, and perform technical audits using Claude's advanced AI capabilities.
+
+## Screenshots
+
+### Landing Page
+![Landing Page](/static/img/git/seo_land.png)
+
+### Workflow Configuration
+![Workflow Configuration](/static/img/git/seo_wf1.png)
+
+### Results View with Live API
+![Results View](/static/img/git/seo_wf_out.png)
 
 ## Setup
 
@@ -60,7 +71,7 @@ The `keys.json` file should contain:
 ```json
 {
   "anthropic": {
-    "api_key": "your_claude_api_key_here",
+    "anthropic_api_key": "your_claude_api_key_here",
     "org_id": "" 
   },
   "application": {
@@ -68,6 +79,12 @@ The `keys.json` file should contain:
   }
 }
 ```
+
+**IMPORTANT:** 
+- You must replace `"your_claude_api_key_here"` with your actual Claude API key to enable live API calls
+- The key is stored in `../secrets/keys.json` (in the parent directory)
+- The API key field is named `anthropic_api_key` instead of `api_key`
+- If you leave the placeholder text, the system will run in mock mode
 
 The `org_id` field is optional and only needed if you're accessing the API through an organization account. It can be left empty for individual API users.
 
@@ -89,11 +106,31 @@ For maximum security, we recommend storing the keys file outside your project di
     └── ...
 ```
 
-Update your `.env` file to point to your chosen location:
+The system is currently configured to look for the keys file at `../secrets/keys.json`. This path is set in `config_secure.py` and can be overridden by setting the `SECRETS_PATH` environment variable:
+
 ```
-KEYS_FILE_PATH=/secure/path/achievewith_keys.json
-# Or using a relative path:
-# KEYS_FILE_PATH=../secrets/keys.json
+# To override the default location:
+export SECRETS_PATH=/secure/path/achievewith_keys.json
+```
+
+### API Key Setup Helper
+
+For easier API key configuration, you can use the included setup script:
+
+```bash
+python setup_api_key.py
+```
+
+This interactive script will:
+- Help you choose between environment variable or keys.json file
+- Guide you through setting up your Claude API key
+- Create or update the keys.json file with proper structure
+- Check for proper configuration
+
+To verify your current API key configuration:
+
+```bash
+python setup_api_key.py --check
 ```
 
 ### Running the Application
@@ -139,7 +176,9 @@ Mock mode generates simulated responses without making actual API calls to Claud
   - No API costs incurred
   - Clearly labeled as mock data in the UI and logs
 
-- **Forcing mock mode**: Add `FORCE_MOCK_MODE=true` to your `.env` file to use mock mode even when an API key is available
+- **Forcing mock mode**: 
+  - Add `FORCE_MOCK_MODE=true` to your `.env` file to use mock mode even when an API key is available
+  - OR edit `config_secure.py` and set `FORCE_MOCK_MODE = True`
 
 ### API Mode (Live)
 
@@ -158,9 +197,12 @@ API mode makes real calls to the Claude API:
 
 ### How Mode Is Determined
 
-The system automatically determines the mode based on:
-1. The presence of a valid Claude API key in the keys file
-2. The `FORCE_MOCK_MODE` environment variable (if set)
+The system automatically determines the mode based on the following (in order of precedence):
+1. The `FORCE_MOCK_MODE` setting in `config_secure.py` - if `True`, always uses mock mode
+2. The `FORCE_MOCK_MODE` environment variable - if set to `true`, uses mock mode
+3. The presence of the `ANTHROPIC_API_KEY` environment variable - if set with a valid key, uses API mode
+4. The presence of a valid Claude API key in the keys.json file - if valid, uses API mode
+5. Otherwise, defaults to mock mode
 
 ### Mode Indicators
 

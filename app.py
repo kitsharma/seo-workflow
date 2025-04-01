@@ -15,6 +15,10 @@ from datetime import datetime
 
 from key_manager import KeyManager
 from claude_workflow_orchestrator import ClaudeSEOWorkflowOrchestrator
+from config_secure import get_api_key, set_env_from_keys_file, FORCE_MOCK_MODE
+
+# Set environment variables from keys file
+set_env_from_keys_file()
 
 # Set up logging
 logging.basicConfig(
@@ -34,8 +38,19 @@ key_manager = KeyManager()
 api_mode, api_mode_reason = key_manager.get_api_mode_info()
 api_diagnostics = key_manager.get_diagnostic_info()
 
-# Get API key if available - Fixed the argument count here
-anthropic_api_key = key_manager.get_key("anthropic", "api_key")
+# Get API key using our improved secure config
+anthropic_api_key = get_api_key("anthropic", "")
+
+# Determine the API mode based on both the key manager and our FORCE_MOCK_MODE setting
+if FORCE_MOCK_MODE:
+    api_mode = "mock"
+    api_mode_reason = "Mock mode is forced in config_secure.py"
+elif anthropic_api_key:
+    api_mode = "live"
+    api_mode_reason = "Using live Claude API with valid key"
+else:
+    api_mode = "mock"
+    api_mode_reason = "No valid API key found, using mock mode"
 
 # Initialize orchestrator with API mode and key information
 orchestrator = ClaudeSEOWorkflowOrchestrator(api_mode=api_mode, api_key=anthropic_api_key)
@@ -177,12 +192,19 @@ def system_info():
         'key_diagnostics': api_diagnostics,
         'environment': {
             'KEYS_FILE_PATH': os.getenv('KEYS_FILE_PATH', 'Not set'),
+            'SECRETS_PATH': os.getenv('SECRETS_PATH', 'Not set'),
             'CLAUDE_MODEL': os.getenv('CLAUDE_MODEL', 'Not set'),
             'ANTHROPIC_API_VERSION': os.getenv('ANTHROPIC_API_VERSION', 'Not set'),
-            'FORCE_MOCK_MODE': os.getenv('FORCE_MOCK_MODE', 'Not set'),
+            'FORCE_MOCK_MODE': str(FORCE_MOCK_MODE),
             'DEBUG': os.getenv('DEBUG', 'Not set'),
             'PORT': os.getenv('PORT', 'Not set'),
             'HOST': os.getenv('HOST', 'Not set'),
+        },
+        'api_config': {
+            'api_key_status': 'Valid' if anthropic_api_key else 'Missing or Invalid',
+            'config_secure_mock_mode': FORCE_MOCK_MODE,
+            'keys_file_exists': os.path.exists(os.getenv('KEYS_FILE_PATH', 'keys.json')),
+            'using_environment_key': bool(os.getenv('ANTHROPIC_API_KEY')),
         }
     }
     

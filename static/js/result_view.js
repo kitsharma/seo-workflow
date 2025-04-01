@@ -30,6 +30,11 @@ window.resultView = function() {
         hasValidResults: false,
         errorMessage: '',
         exportMenuOpen: false,
+        activeTab: "overview",
+        selectedStep: "",
+        showModal: false,
+        modalStep: "",
+        jsonEditor: null,
         
         // Module instances
         dataManager: null,
@@ -153,6 +158,160 @@ window.resultView = function() {
             }
             
             return "The result data has an unexpected format. Please check the raw JSON download.";
+        },
+        
+        /**
+         * Format a key for display (convert snake_case to Title Case)
+         * @param {string} key - The key to format
+         * @returns {string} The formatted key
+         */
+        formatKey(key) {
+            if (!key) return "";
+            
+            // Remove prefixes like "output_"
+            let formattedKey = key.replace(/^(output_|input_)/, "");
+            
+            // Replace underscores with spaces
+            formattedKey = formattedKey.replace(/_/g, " ");
+            
+            // Capitalize each word
+            return formattedKey.split(" ")
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ");
+        },
+        
+        /**
+         * Get all workflow steps
+         * @returns {string[]} Array of step keys
+         */
+        getWorkflowSteps() {
+            return Object.keys(this.result || {})
+                .filter(key => key.startsWith("output_"))
+                .sort();
+        },
+        
+        /**
+         * Get analysis text for a step
+         * @param {string} step - The step key
+         * @returns {string} The analysis text
+         */
+        getStepAnalysis(step) {
+            if (!step || !this.result[step]) return "";
+            
+            const stepData = this.result[step];
+            
+            if (typeof stepData === "object") {
+                // If analysis is a string, return it directly
+                if (typeof stepData.analysis === "string") {
+                    return stepData.analysis;
+                }
+                // If analysis is an object, stringify it
+                else if (typeof stepData.analysis === "object") {
+                    return JSON.stringify(stepData.analysis);
+                }
+                // Try response_text as fallback
+                else if (typeof stepData.response_text === "string") {
+                    return stepData.response_text;
+                }
+            }
+            
+            // If we get here, we couldn't find a suitable text representation
+            return "No analysis available";
+        },
+        
+        /**
+         * Get recommendations for a step
+         * @param {string} step - The step key
+         * @returns {Array} Array of recommendations
+         */
+        getStepRecommendations(step) {
+            if (!step || !this.result[step]) return [];
+            
+            const stepData = this.result[step];
+            
+            if (typeof stepData === "object" && Array.isArray(stepData.recommendations)) {
+                return stepData.recommendations;
+            }
+            
+            return [];
+        },
+        
+        /**
+         * Format a recommendation for display
+         * @param {*} rec - The recommendation
+         * @returns {string} The formatted recommendation
+         */
+        formatRecommendation(rec) {
+            if (typeof rec === "string") {
+                return rec;
+            } else if (typeof rec === "object") {
+                return JSON.stringify(rec);
+            }
+            return String(rec);
+        },
+        
+        /**
+         * Check if a step has additional data
+         * @param {string} step - The step key
+         * @returns {boolean} True if the step has additional data
+         */
+        hasAdditionalData(step) {
+            if (!step || !this.result[step]) return false;
+            
+            const stepData = this.result[step];
+            
+            if (typeof stepData !== "object") return false;
+            
+            // Check if there are keys other than analysis, recommendations, and response_text
+            for (const key in stepData) {
+                if (key !== "analysis" && key !== "recommendations" && key !== "response_text" && key !== "_api_info") {
+                    return true;
+                }
+            }
+            
+            return false;
+        },
+        
+        /**
+         * Get additional data for a step
+         * @param {string} step - The step key
+         * @returns {Object} The additional data
+         */
+        getAdditionalData(step) {
+            if (!step || !this.result[step]) return {};
+            
+            return this.result[step];
+        },
+        
+        /**
+         * View step details in a modal
+         * @param {string} step - The step key
+         */
+        viewStepDetails(step) {
+            this.modalStep = step;
+            this.showModal = true;
+        },
+        
+        /**
+         * Initialize the JSON editor
+         */
+        initJsonEditor() {
+            if (this.activeTab === 'json' && !this.jsonEditor) {
+                this.$nextTick(() => {
+                    const container = document.getElementById('jsoneditor');
+                    if (container) {
+                        const options = {
+                            mode: 'view',
+                            modes: ['view', 'code', 'tree', 'form'],
+                            onModeChange: function(newMode, oldMode) {
+                                console.log('Mode switched from', oldMode, 'to', newMode);
+                            }
+                        };
+                        this.jsonEditor = new JSONEditor(container, options);
+                        this.jsonEditor.set(this.result);
+                    }
+                });
+            }
         }
     };
 };
