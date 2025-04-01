@@ -223,6 +223,9 @@ You can identify which mode is active through:
 - `static/`: Static assets (CSS, JS, images)
 - `results/`: Storage location for workflow results
 
+## AI Disclosure
+- AI was used in the creation of this project. Special thanks to claude code:)
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
