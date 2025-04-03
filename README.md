@@ -1,4 +1,4 @@
-# Sweet SEO achievewith.ai 
+# Simply Smart SEO by achievewith.ai 
 
 A powerful web-based system for running SEO workflows powered by AI. This application helps you analyze websites, develop content strategies, create SEO-optimized content, and perform technical audits using AI.
 
